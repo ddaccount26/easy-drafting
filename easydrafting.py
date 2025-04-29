@@ -12,9 +12,10 @@ gcp_service_account = dict(st.secrets["gcp_service_account"])
 import json
 from tempfile import NamedTemporaryFile
 
-with NamedTemporaryFile(delete=False, suffix=".json") as tmp_file:
+with NamedTemporaryFile(mode="w", delete=False, suffix=".json") as tmp_file:
     json.dump(gcp_service_account, tmp_file)
     tmp_file_path = tmp_file.name
+
 
 # Set the GOOGLE_APPLICATION_CREDENTIALS env variable to the temp file
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = tmp_file_path
