@@ -6,7 +6,7 @@ from google.cloud import translate_v2 as translate
 from PIL import Image
 
 # Load service account info from Streamlit secrets
-gcp_service_account = st.secrets["gcp_service_account"]
+gcp_service_account = dict(st.secrets["gcp_service_account"])
 
 # Create a temporary credentials file from the secrets
 import json
