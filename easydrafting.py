@@ -1,18 +1,27 @@
 import streamlit as st
 import os
 import io
-from dotenv import load_dotenv
 from google.cloud import vision
 from google.cloud import translate_v2 as translate
 from PIL import Image
 
-# Load environment variables
-load_dotenv()
-google_creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-if not google_creds:
-    st.error("Google credentials not found in environment variables.")
-    st.stop()
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_creds
+# Load service account info from Streamlit secrets
+gcp_service_account = st.secrets["gcp_service_account"]
+
+# Create a temporary credentials file from the secrets
+import json
+from tempfile import NamedTemporaryFile
+
+with NamedTemporaryFile(delete=False, suffix=".json") as tmp_file:
+    json.dump(gcp_service_account, tmp_file)
+    tmp_file_path = tmp_file.name
+
+# Set the GOOGLE_APPLICATION_CREDENTIALS env variable to the temp file
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = tmp_file_path
+
+# Now initialize Google Cloud clients
+vision_client = vision.ImageAnnotatorClient()
+translate_client = translate.Client()
 
 # Initialize Google Cloud clients
 try:
